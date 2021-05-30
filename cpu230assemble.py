@@ -58,7 +58,7 @@ with open("prog.asm.txt", "r") as b_file:
 
     if words[0] == 'HALT':
       f.write('040000')
-    
+      
 
 
     if words[0] == 'LOAD':
