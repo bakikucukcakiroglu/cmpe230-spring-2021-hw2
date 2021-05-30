@@ -32,8 +32,10 @@ my_dict = {'HALT': 1, 'LOAD': 2, 'STORE':3, 'ADD':4, 'SUB':5, 'INC':6, 'DEC':7, 
 label_dict = { }
 
 register_dict = {'PC' :'0000', 'A':'0001', 'B' :'0002', 'C':'0003', 'D':'0004', 'E':'0005', 'S':'0006'}
+input_filename = sys.argv[1]
+output_filename=sys.argv[2]
 
-with open("prog.asm.txt", "r") as a_file:
+with open(input_filename, "r") as a_file:
 
 
 #doğru syntax için label bulur ve string olarak adresini dicte ekler 
@@ -42,51 +44,71 @@ with open("prog.asm.txt", "r") as a_file:
     stripped_line = line.strip()
     if ':' in  stripped_line:
         temp = stripped_line[:-1]
+        print('temp', temp)
         label_dict[temp] = count 
+    elif len(stripped_line)==0:
+        continue
     else:
         count+=3
 
-  f = open("prog.txt", "w")
+  f = open(output_filename, "w")
 
-with open("prog.asm.txt", "r") as b_file:
+with open(input_filename, "r") as b_file:
+
   
-  for line in b_file:   
+  for line in b_file:
+    print(label_dict)   
     stripped_line = line.strip()
+    if(len(stripped_line)==0):
+      continue
+
     words = stripped_line.split() #düzgün syntaxta lineı boşluklardan ayırır ( STORE [ A ]) düşün  LOAD [A]
     print(words)
 
 
     if words[0] == 'HALT':
       f.write('040000')
+      f.write('\n')
       
 
 
     if words[0] == 'LOAD':
       print('buraya')
       print(words[1].count('\''))
-      print(words[1][1:-1])
+      print(words[1])
       if words[1] in register_dict:               # register mı?
+        print('reg')
         f.write(converter('2', '1', register_dict[words[1]]))
         f.write('\n')
       elif '[' in words[1] and ']' in words[1]: 
         if words[1][1:-1] in register_dict:       # memory register
+          print('memreg')
+
           f.write(converter('2', '2', register_dict[words[1][1:-1]]))
           f.write('\n')
         else:                                     #memory
+          print('mem')
+
           f.write(converter('2', '3', words[1][1:-1]))
           f.write('\n')
-      elif ((words[1].isdigit() and len(words[1])==4) or (words[1][0]=='‘' and words[1][2]=='’')):   #immediate
+      elif (((words[1].isalnum() and len(words[1])==4) or (words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict)):   #immediate
         print('girdim')
-        if(words[1].isdigit() and len(words[1])==4):
+        if(words[1].isalnum() and len(words[1])==4):
+          print('k')
           f.write(converter('2', '0', words[1]))
           f.write('\n')
         else:
+          print('l')
           character = words[1][1:-1]
           f.write(converter('2', '0', hex(ord(character))[2:]))
           f.write('\n')
       elif words[1] in label_dict:
+          print('m')
+          print('aaa',words[1][:-1])
           f.write(converter('2', '0', hex(label_dict[words[1]])[2:]))
           f.write('\n')
+      else:
+          print('no')
 
 
 
@@ -106,7 +128,7 @@ with open("prog.asm.txt", "r") as b_file:
 
     if words[0] == 'ADD':
       if words[1] in register_dict:               # register mı?  A,B,C
-        f.write(converter('4', '1', register_value))
+        f.write(converter('4', '1', register_dict[words[1]]))
         f.write('\n')
       elif '[' in words[1] and ']' in words[1]: 
         if words[1][1:-1] in register_dict:       # memory register [A]
@@ -115,8 +137,8 @@ with open("prog.asm.txt", "r") as b_file:
         else:                                     #memory [0010]
           f.write(converter('4', '3', words[1][1:-1]))
           f.write('\n')
-      elif ((words[1].isdigit() and len(words[1])==4) or (words[1][0]=='‘' and words[1][2]=='’')):   #immediate
-        if(words[1].isdigit() and len(words[1])==4):
+      elif (((words[1].isalnum() and len(words[1])==4) or (words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict)):   #immediate
+        if(words[1].isalnum() and len(words[1])==4):
           f.write(converter('4', '0', words[1]))
           f.write('\n')
         else:
@@ -140,8 +162,8 @@ with open("prog.asm.txt", "r") as b_file:
         else:                                     #memory
           f.write(converter('5', '3', words[1][1:-1]))
           f.write('\n')
-      elif ((words[1].isdigit() and len(words[1])==4) or (words[1][0]=='‘' and words[1][2]=='’')):   #immediate
-        if(words[1].isdigit() and len(words[1])==4):
+      elif (((words[1].isalnum() and len(words[1])==4) or (words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict)):   #immediate
+        if(words[1].isalnum() and len(words[1])==4):
           f.write(converter('5', '0', words[1]))
           f.write('\n')
         else:
@@ -165,8 +187,8 @@ with open("prog.asm.txt", "r") as b_file:
         else:                                     #memory
           f.write(converter('6', '3', words[1][1:-1]))
           f.write('\n')
-      elif ((words[1].isdigit() and len(words[1])==4) or (words[1][0]=='‘' and words[1][2]=='’')):   #immediate
-        if(words[1].isdigit() and len(words[1])==4):
+      elif (((words[1].isalnum() and len(words[1])==4) or (words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict)):   #immediate
+        if(words[1].isalnum() and len(words[1])==4):
           f.write(converter('6', '0', words[1]))
         else:
           f.write(converter('6', '0', hex(ord(words[1][1:-1]))[2:]))
@@ -188,8 +210,8 @@ with open("prog.asm.txt", "r") as b_file:
         else:                                     #memory
           f.write(converter('7', '3', words[1][1:-1]))
           f.write('\n')
-      elif ((words[1].isdigit() and len(words[1])==4) or (words[1][0]=='‘' and words[1][2]=='’')):   #immediate
-        if(words[1].isdigit() and len(words[1])==4):
+      elif (((words[1].isalnum() and len(words[1])==4) or (words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict)):   #immediate
+        if(words[1].isalnum() and len(words[1])==4):
           f.write(converter('7', '0', words[1]))
           f.write('\n')
         else:
@@ -213,8 +235,8 @@ with open("prog.asm.txt", "r") as b_file:
         else:                                     #memory
           f.write(converter('8', '3', words[1][1:-1]))
           f.write('\n')
-      elif ((words[1].isdigit() and len(words[1])==4) or (words[1][0]=='‘' and words[1][2]=='’')):   #immediate
-        if(words[1].isdigit() and len(words[1])==4):
+      elif (((words[1].isalnum() and len(words[1])==4) or (words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict)):   #immediate
+        if(words[1].isalnum() and len(words[1])==4):
           f.write(converter('8', '0', words[1]))
           f.write('\n')
         else:
@@ -238,8 +260,8 @@ with open("prog.asm.txt", "r") as b_file:
         else:                                     #memory
           f.write(converter('9', '3', words[1][1:-1]))
           f.write('\n')
-      elif ((words[1].isdigit() and len(words[1])==4) or (words[1][0]=='‘' and words[1][2]=='’')):   #immediate
-        if(words[1].isdigit() and len(words[1])==4):
+      elif (((words[1].isalnum() and len(words[1])==4) or (words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict)):   #immediate
+        if(words[1].isalnum() and len(words[1])==4):
           f.write(converter('9', '0', words[1]))
           f.write('\n')
         else:
@@ -262,8 +284,8 @@ with open("prog.asm.txt", "r") as b_file:
         else:                                     #memory
           f.write(converter('A', '3', words[1][1:-1]))
           f.write('\n')
-      elif ((words[1].isdigit() and len(words[1])==4) or (words[1][0]=='‘' and words[1][2]=='’')):   #immediate
-        if(words[1].isdigit() and len(words[1])==4):
+      elif (((words[1].isalnum() and len(words[1])==4) or (words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict)):   #immediate
+        if(words[1].isalnum() and len(words[1])==4):
           f.write(converter('A', '0', words[1]))
           f.write('\n')
         else:
@@ -286,8 +308,8 @@ with open("prog.asm.txt", "r") as b_file:
         else:                                     #memory
           f.write(converter('B', '3', words[1][1:-1]))
           f.write('\n')
-      elif ((words[1].isdigit() and len(words[1])==4) or (words[1][0]=='‘' and words[1][2]=='’')):   #immediate
-        if(words[1].isdigit() and len(words[1])==4):
+      elif (((words[1].isalnum() and len(words[1])==4) or (words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict)):   #immediate
+        if(words[1].isalnum() and len(words[1])==4):
           f.write(converter('B', '0', words[1]))
           f.write('\n')
         else:
@@ -314,7 +336,8 @@ with open("prog.asm.txt", "r") as b_file:
 
 
     if words[0] == 'NOP':
-      f.write('')
+      f.write('380000')
+      f.write('\n')
 
 
 
@@ -343,8 +366,8 @@ with open("prog.asm.txt", "r") as b_file:
         else:                                     #memory
           f.write(converter('11', '3', words[1][1:-1]))
           f.write('\n')
-      elif ((words[1].isdigit() and len(words[1])==4) or (words[1][0]=='‘' and words[1][2]=='’')):   #immediate
-        if(words[1].isdigit() and len(words[1])==4):
+      elif (((words[1].isalnum() and len(words[1])==4) or (words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict)):   #immediate
+        if(words[1].isalnum() and len(words[1])==4):
           f.write(converter('11', '0', words[1]))
           f.write('\n')
         else:
@@ -357,22 +380,23 @@ with open("prog.asm.txt", "r") as b_file:
 
 
     if words[0] == 'JMP':
-      if ((words[1].isdigit() and len(words[1])==4) or (words[1][0]=='‘' and words[1][2]=='’')):   #immediate
-        if(words[1].isdigit() and len(words[1])==4):
+      if (((words[1].isalnum() and len(words[1])==4) or (words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict)):   #immediate
+        if(words[1].isalnum() and len(words[1])==4):
           f.write(converter('12', '0', words[1]))
           f.write('\n')
         else:
           f.write(converter('12', '0', hex(ord(words[1][1:-1]))[2:]))
           f.write('\n')
       elif words[1] in label_dict:
+          print('aaa',words[1][:-1])
           f.write(converter('12', '0', hex(label_dict[words[1]])[2:]))
           f.write('\n')
 
 
 
     if words[0] == 'JZ' or words[0] == 'JE' :
-      if ((words[1].isdigit() and len(words[1])==4) or (words[1][0]=='‘' and words[1][2]=='’')):   #immediate
-        if(words[1].isdigit() and len(words[1])==4):
+      if (((words[1].isalnum() and len(words[1])==4) or (words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict)):   #immediate
+        if(words[1].isalnum() and len(words[1])==4):
           f.write(converter('13', '0', words[1]))
           f.write('\n')
         else:
@@ -385,8 +409,8 @@ with open("prog.asm.txt", "r") as b_file:
 
 
     if words[0] == 'JNZ' or words[0] == 'JNE' :
-      if ((words[1].isdigit() and len(words[1])==4) or (words[1][0]=='‘' and words[1][2]=='’')):   #immediate
-        if(words[1].isdigit() and len(words[1])==4):
+      if (((words[1].isalnum() and len(words[1])==4) or (words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict)):   #immediate
+        if(words[1].isalnum() and len(words[1])==4):
           f.write(converter('14', '0', words[1]))
           f.write('\n')
         else:
@@ -399,8 +423,8 @@ with open("prog.asm.txt", "r") as b_file:
 
 
     if words[0] == 'JC':
-      if ((words[1].isdigit() and len(words[1])==4) or (words[1][0]=='‘' and words[1][2]=='’')):   #immediate
-        if(words[1].isdigit() and len(words[1])==4):
+      if (((words[1].isalnum() and len(words[1])==4) or (words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict)):   #immediate
+        if(words[1].isalnum() and len(words[1])==4):
           f.write(converter('15', '0', words[1]))
           f.write('\n')
         else:
@@ -413,8 +437,8 @@ with open("prog.asm.txt", "r") as b_file:
 
 
     if words[0] == 'JNC':
-      if ((words[1].isdigit() and len(words[1])==4) or (words[1][0]=='‘' and words[1][2]=='’')):   #immediate
-        if(words[1].isdigit() and len(words[1])==4):
+      if (((words[1].isalnum() and len(words[1])==4) or (words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict)):   #immediate
+        if(words[1].isalnum() and len(words[1])==4):
           f.write(converter('16', '0', words[1]))
           f.write('\n')
         else:
@@ -428,8 +452,8 @@ with open("prog.asm.txt", "r") as b_file:
 
     if words[0] == 'JA':
 
-      if ((words[1].isdigit() and len(words[1])==4) or (words[1][0]=='‘' and words[1][2]=='’')):   #immediate
-        if(words[1].isdigit() and len(words[1])==4):
+      if (((words[1].isalnum() and len(words[1])==4) or (words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict)):   #immediate
+        if(words[1].isalnum() and len(words[1])==4):
           f.write(converter('17', '0', words[1]))
           f.write('\n')
         else:
@@ -444,8 +468,8 @@ with open("prog.asm.txt", "r") as b_file:
 
     if words[0] == 'JAE':
 
-      if ((words[1].isdigit() and len(words[1])==4) or (words[1][0]=='‘' and words[1][2]=='’')):   #immediate
-        if(words[1].isdigit() and len(words[1])==4):
+      if (((words[1].isalnum() and len(words[1])==4) or (words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict)):   #immediate
+        if(words[1].isalnum() and len(words[1])==4):
           f.write(converter('18', '0', words[1]))
           f.write('\n')
         else:
@@ -460,8 +484,8 @@ with open("prog.asm.txt", "r") as b_file:
 
     if words[0] == 'JB':
 
-      if ((words[1].isdigit() and len(words[1])==4) or (words[1][0]=='‘' and words[1][2]=='’')):   #immediate
-        if(words[1].isdigit() and len(words[1])==4):
+      if (((words[1].isalnum() and len(words[1])==4) or (words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict)):   #immediate
+        if(words[1].isalnum() and len(words[1])==4):
           f.write(converter('19', '0', words[1]))
           f.write('\n')
         else:
@@ -476,8 +500,8 @@ with open("prog.asm.txt", "r") as b_file:
 
     if words[0] == 'JBE':
 
-      if ((words[1].isdigit() and len(words[1])==4) or (words[1][0]=='‘' and words[1][2]=='’')):   #immediate
-        if(words[1].isdigit() and len(words[1])==4):
+      if (((words[1].isalnum() and len(words[1])==4) or (words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict)):   #immediate
+        if(words[1].isalnum() and len(words[1])==4):
           f.write(converter('1A', '0', words[1]))
           f.write('\n')
         else:
@@ -505,25 +529,41 @@ with open("prog.asm.txt", "r") as b_file:
 
 
     if words[0] == 'PRINT':
+      print('printteyim')
       if words[1] in register_dict:               # register mı?
+        print('p1')
         f.write(converter('1C', '1', register_dict[words[1]]))
         f.write('\n')
       elif '[' in words[1] and ']' in words[1]: 
+        print('p2')
+
         if words[1][1:-1] in register_dict:       # memory register
+          print('p3')
+  
           f.write(converter('1C', '2', register_dict[words[1][1:-1]]))
           f.write('\n')
         else:                                     #memory
+          print('p4')
+
           f.write(converter('1C', '3', words[1][1:-1]))
           f.write('\n')
-      elif ((words[1].isdigit() and len(words[1])==4) or (words[1][0]=='‘' and words[1][2]=='’')):   #immediate
-        if(words[1].isdigit() and len(words[1])==4):
+      elif (((words[1].isalnum() and len(words[1])==4) or (words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict)):   #immediate
+        print('p5')
+
+        if(words[1].isalnum() and len(words[1])==4):
+          print('p6')
+
           f.write(converter('1C', '0', words[1]))
           f.write('\n')
         else:
+          print('p7')
+
           character = words[1][1:-1]
           f.write(converter('1C', '0', hex(ord(character))[2:]))
           f.write('\n')
       elif words[1] in label_dict:
+          print('p8')
+
           f.write(converter('1C', '0', hex(label_dict[words[1]])[2:]))
           f.write('\n')
 
