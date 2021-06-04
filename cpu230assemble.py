@@ -71,7 +71,6 @@ for line in upper_list:
         exit()
 
     temp = stripped_line[:-1]  
-    print('temp', temp)
     label_dict[temp] = count 
   elif len(stripped_line)==0: # If a line is empty then continue to next iteration.
       continue
@@ -80,7 +79,6 @@ for line in upper_list:
 
 f = open(output_filename, "w")
 
-print(upper_list)
 
 
 for stripped_line in upper_list:  
@@ -98,7 +96,6 @@ for stripped_line in upper_list:
       exit()
 
   words = stripped_line.split()  # The tokenized version of a list. The list contains strings. For example for LOAD A, words[0]="LOAD" and words[1]="A".
-  print(words)
 
   if words[0] == 'HALT': # If first string of a line is HALT, then write the followings in output file:
     if(len(words)>1): # If there is more than 1 tokens in a line then there is a syntax error.
@@ -511,7 +508,6 @@ for stripped_line in upper_list:
         f.write(converter('12', '0', hex(ord(words[1][1:-1]))[2:]))
         f.write('\n')
     elif words[1] in label_dict: #If second string is in label_dict then write the followings in output file.
-        print('aaa',words[1][:-1])
         f.write(converter('12', '0', hex(label_dict[words[1]])[2:]))
         f.write('\n')
     else:  #If second word does not meet the above conditions that means there is a syntax error. Because there is nothing left. Exits.
