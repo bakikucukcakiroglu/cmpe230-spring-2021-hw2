@@ -10,7 +10,7 @@ def splitter(programHex):
     list=[opBin, addrModeBin, operandBin]
     return list
 
-def ADD(operand1, operand2):
+def ADD(operand1, operand2):                        #Adds operand1 and operand2 and sets flags accorginly. 
 
     integer_sum = int(operand1, 2) + int(operand2, 2) 
     print('toplanan elemanlar',int(operand1, 2), int(operand2, 2) )
@@ -35,7 +35,7 @@ def ADD(operand1, operand2):
 
     return binary_sum[1:17]
 
-def NOT(operand):
+def NOT(operand):                                   #Executes binary not operation and sets flags accordingly.
     print('operand',operand)
     not_operand=''
     for i in range(0,16):
@@ -58,7 +58,7 @@ def NOT(operand):
 
     return not_operand
 
-def zf_cf_set(result):
+def zf_cf_set(result):                              #This method sets flags of binary logic operations(XOR, AND, OR) It takes a decimal number as parameter and sets flags accordingly.
 
     result_bin=format(result,'016b')
     if result ==0:
@@ -75,8 +75,8 @@ def zf_cf_set(result):
 
 
 
-memory = ['00000000']*(2**16)
-filename = sys.argv[1]
+memory = ['00000000']*(2**16)                       # Mermory of our vitual computer. It has 64kb addressing span and every cell keeps 1 byte data. 
+filename = sys.argv[1]                              # Takes the name of output of cpu230assemble program as argument.(bin file)
 with open(filename, "r") as c_file:
     count=0
     for line in c_file:
@@ -90,13 +90,15 @@ with open(filename, "r") as c_file:
 
 
 
-register_value_dict = {'PC' :'0000000000000000', 'A':'0000000000000000', 'B' :'0000000000000000', 'C':'0000000000000000', 'D':'0000000000000000', 'E':'0000000000000000', 'S':'1111111111111111'}
+register_value_dict = {'PC' :'0000000000000000', 'A':'0000000000000000', 'B' :'0000000000000000', 'C':'0000000000000000', 'D':'0000000000000000', 'E':'0000000000000000', 'S':'1111111111111111'}   
+# This dict keeps registers and their values. 
 register_adress_dict = {'0000000000000000': 'PC', '0000000000000001':'A', '0000000000000010':'B', '0000000000000011':'C', '0000000000000100':'D', '0000000000000101':'E','0000000000000110':'S'}
+# This dict keeps adresses of register in our virtual cpu. 
 
-flags= {'ZF': None, 'CF': None, 'SF': None}
-output_file_name=sys.argv[2]
-output_file= open(output_file_name, "w")
-with open(filename, "r") as d_file:
+flags= {'ZF': None, 'CF': None, 'SF': None}         # This dict keeps flags. They are initially empty. 
+output_file_name=sys.argv[2]                        # Takes output file that program write on as an argument. 
+output_file= open(output_file_name, "w")            # Allows us writing to output file. 
+with open(filename, "r") as d_file:                 
     counter=0
     while int(register_value_dict['PC'],base=2) <65536:
         counter+=1
@@ -107,7 +109,7 @@ with open(filename, "r") as d_file:
         list=splitter(instruction_line)
         print(list)
 
-        if(list[0]=='000001'):    #1 HALT
+        if(list[0]=='000001'):    #1 HALT. If 6 bit opcode is 000001, it means we execute 'HALT'.
 
             print('1')
 
@@ -115,7 +117,7 @@ with open(filename, "r") as d_file:
 
 
 
-        if(list[0]=='000010'):     #2  LOAD
+        if(list[0]=='000010'):     #2  LOAD. If 6 bit opcode is 000010, it means we execute 'LOAD'.
             print('2')
 
             if list[1]=='00':                                
@@ -136,7 +138,7 @@ with open(filename, "r") as d_file:
 
 
 
-        if(list[0]=='000011'):    #3  STORE
+        if(list[0]=='000011'):    #3  STORE. If 6 bit opcode is 000011, it means we execute 'STORE'.
             print('3')
 
             if list[1]=='01':
@@ -157,7 +159,7 @@ with open(filename, "r") as d_file:
 
 
 
-        if(list[0]=='000100'):    #4  ADD
+        if(list[0]=='000100'):    #4  ADD. If 6 bit opcode is 000100, it means we execute 'ADD'.
             print('4')
 
             if list[1]=='00':                                

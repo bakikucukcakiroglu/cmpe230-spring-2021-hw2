@@ -39,8 +39,9 @@ with open(input_filename, "r") as first_file:  # We put all lines in a list that
   for line in first_file:
 
     stripped_line = line.strip()                           
-    if("'" in line ):
-      upper_list.append(line[:-3].upper() )
+    if('\'' in line ):
+      upper_list.append(stripped_line[:-3].upper() + stripped_line[-3:])
+
     elif(("[" in stripped_line) and ("]" in stripped_line)):
       index1=line.index("[")
       index2=line.index("]")
@@ -54,7 +55,7 @@ with open(input_filename, "r") as first_file:  # We put all lines in a list that
 
 
 
-# Finds the labels and their memory addresses then records the values in the label_dict.
+# Finds the labels and their memory addresses then records the values in the label_dict. 
 count = 0
 for line in upper_list:
   stripped_line = line.strip()
@@ -65,7 +66,7 @@ for line in upper_list:
       exit()
     
     for x in label_dict:
-      if(lower(x) == lower(words[:-1])):
+      if(x.lower() == words[0].lower()):
         print("Syntax error.")
         exit()
 
@@ -79,13 +80,22 @@ for line in upper_list:
 
 f = open(output_filename, "w")
 
+print(upper_list)
 
-for line in upper_list:  
+
+for stripped_line in upper_list:  
 
   
 
   if(len(stripped_line)==0): # If line is empty then continue to next iteration.
     continue
+
+  elif(':' in stripped_line ):
+    if(stripped_line[:-1] in label_dict):
+      continue
+    else:
+      print("Syntax error.")
+      exit()
 
   words = stripped_line.split()  # The tokenized version of a list. The list contains strings. For example for LOAD A, words[0]="LOAD" and words[1]="A".
   print(words)
@@ -115,7 +125,7 @@ for line in upper_list:
       else:                               # If the word between [ ] is a hexadecimal number, then write the following in output file:    
         f.write(converter('2', '3', words[1][1:-1]))
         f.write('\n')
-    elif ( ( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'') and (words[1] not in label_dict) ):   #If second word is hexadecimal or a char between ' '  then check the followings:
+    elif ( (( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict) ):   #If second word is hexadecimal or a char between ' '  then check the followings:
       if(words[1].isalnum() and len(words[1])<6): #If second string is 1 2 3 4 5 digit hexadecimal then write the followings in output file:
         f.write(converter('2', '0', words[1]))
         f.write('\n')
@@ -171,7 +181,7 @@ for line in upper_list:
       else:                                    # If the word between [ ] is a hexadecimal number, then write the following in output file
         f.write(converter('4', '3', words[1][1:-1]))
         f.write('\n')
-    elif ( ( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'') and (words[1] not in label_dict) ): #If second word is hexadecimal or a char between ' '  then check the followings:
+    elif ( (( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict) ): #If second word is hexadecimal or a char between ' '  then check the followings:
       if(words[1].isalnum() and len(words[1])<6): #If second string is 1 2 3 4 5 digit hexadecimal then write the followings in output file:
         f.write(converter('4', '0', words[1]))
         f.write('\n')
@@ -203,7 +213,7 @@ for line in upper_list:
       else:                                    # If the word between [ ] is a hexadecimal number, then write the following in output file
         f.write(converter('5', '3', words[1][1:-1]))
         f.write('\n')
-    elif ( ( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'') and (words[1] not in label_dict) ): #If second word is hexadecimal or a char between ' '  then check the followings: 
+    elif ( (( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict) ): #If second word is hexadecimal or a char between ' '  then check the followings: 
       if(words[1].isalnum() and len(words[1])<6): #If second string is 1 2 3 4 5 digit hexadecimal then write the followings in output file:
         f.write(converter('5', '0', words[1]))
         f.write('\n')
@@ -235,7 +245,7 @@ for line in upper_list:
       else:                                   # If the word between [ ] is a hexadecimal number, then write the following in output file
         f.write(converter('6', '3', words[1][1:-1]))
         f.write('\n')
-    elif ( ( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'') and (words[1] not in label_dict) ):   #If second word is hexadecimal or a char between ' '  then check the followings: 
+    elif ( (( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict) ):  #If second word is hexadecimal or a char between ' '  then check the followings: 
       if(words[1].isalnum() and len(words[1])<6): #If second string is 1 2 3 4 5 digit hexadecimal then write the followings in output file:
         f.write(converter('6', '0', words[1]))
       else: #If it is not a 4 digit hexadecimal then that means it is a char between ' '. Find the ascii code of the char and convert that ascii code to hex. Then put the found value in converter function.
@@ -264,7 +274,7 @@ for line in upper_list:
       else:                                      # If the word between [ ] is a hexadecimal number, then write the following in output file
         f.write(converter('7', '3', words[1][1:-1]))
         f.write('\n')
-    elif ( ( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'') and (words[1] not in label_dict) ):   #If second word is hexadecimal or a char between ' '  then check the followings: 
+    elif ( (( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict) ):  #If second word is hexadecimal or a char between ' '  then check the followings: 
       if(words[1].isalnum() and len(words[1])<6): #If second string is 1 2 3 4 5 digit hexadecimal then write the followings in output file:
         f.write(converter('7', '0', words[1]))
         f.write('\n')
@@ -295,7 +305,7 @@ for line in upper_list:
       else:                                      # If the word between [ ] is a hexadecimal number, then write the following in output file
         f.write(converter('8', '3', words[1][1:-1]))
         f.write('\n')
-    elif ( ( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'') and (words[1] not in label_dict) ):  #If second word is hexadecimal or a char between ' '  then check the followings: 
+    elif ( (( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict) ):  #If second word is hexadecimal or a char between ' '  then check the followings: 
       if(words[1].isalnum() and len(words[1])<6):  #If second string is 1 2 3 4 5 digit hexadecimal then write the followings in output file:
         f.write(converter('8', '0', words[1]))
         f.write('\n')
@@ -326,7 +336,7 @@ for line in upper_list:
       else:                                    # If the word between [ ] is a hexadecimal number, then write the following in output file
         f.write(converter('9', '3', words[1][1:-1]))
         f.write('\n')
-    elif ( ( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'') and (words[1] not in label_dict) ): #If second word is hexadecimal or a char between ' '  then check the followings: 
+    elif ( (( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict) ): #If second word is hexadecimal or a char between ' '  then check the followings: 
       if(words[1].isalnum() and len(words[1])<6):  #If second string is 1 2 3 4 5 digit hexadecimal then write the followings in output file:
         f.write(converter('9', '0', words[1]))
         f.write('\n')
@@ -356,7 +366,7 @@ for line in upper_list:
       else:                                   # If the word between [ ] is a hexadecimal number, then write the following in output file
         f.write(converter('A', '3', words[1][1:-1]))
         f.write('\n')
-    elif ( ( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'') and (words[1] not in label_dict) ):    #If second word is hexadecimal or a char between ' '  then check the followings:   
+    elif ( (( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict) ):   #If second word is hexadecimal or a char between ' '  then check the followings:   
       if(words[1].isalnum() and len(words[1])<6):#If second string is 1 2 3 4 5 digit hexadecimal then write the followings in output file:
         f.write(converter('A', '0', words[1]))
         f.write('\n')
@@ -386,7 +396,7 @@ for line in upper_list:
       else:                                   # If the word between [ ] is a hexadecimal number, then write the following in output file
         f.write(converter('B', '3', words[1][1:-1]))
         f.write('\n')
-    elif ( ( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'') and (words[1] not in label_dict) ):   #If second word is hexadecimal or a char between ' '  then check the followings:   
+    elif ( (( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict) ):   #If second word is hexadecimal or a char between ' '  then check the followings:   
       if(words[1].isalnum() and len(words[1])<6):#If second string is 1 2 3 4 5 digit hexadecimal then write the followings in output file:
         f.write(converter('B', '0', words[1]))
         f.write('\n')
@@ -474,7 +484,7 @@ for line in upper_list:
       else:                                    # If the word between [ ] is a hexadecimal number, then write the following in output file
         f.write(converter('11', '3', words[1][1:-1]))
         f.write('\n')
-    elif ( ( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'') and (words[1] not in label_dict) ): #If second word is hexadecimal or a char between ' '  then check the followings: 
+    elif ( (( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict) ): #If second word is hexadecimal or a char between ' '  then check the followings: 
       if(words[1].isalnum() and len(words[1])<6): #If second string is 1 2 3 4 5 digit hexadecimal then write the followings in output file:
         f.write(converter('11', '0', words[1]))
         f.write('\n')
@@ -493,7 +503,7 @@ for line in upper_list:
     if(len(words)>2):  # If there is more than 2 tokens in a line then there is a syntax error
       print("Syntax error.")
       exit()
-    if ( ( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'') and (words[1] not in label_dict) ):    #If second word is hexadecimal or a char between ' '  then check the followings: 
+    if ( (( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict) ):   #If second word is hexadecimal or a char between ' '  then check the followings: 
       if(words[1].isalnum() and len(words[1])<6): #If second string is 1 2 3 4 5 digit hexadecimal then write the followings in output file:
         f.write(converter('12', '0', words[1]))
         f.write('\n')
@@ -513,7 +523,7 @@ for line in upper_list:
     if(len(words)>2):  # If there is more than 2 tokens in a line then there is a syntax error
       print("Syntax error.")
       exit()
-    if ( ( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'') and (words[1] not in label_dict) ):    #If second word is hexadecimal or a char between ' '  then check the followings: 
+    if ( (( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict) ):  #If second word is hexadecimal or a char between ' '  then check the followings: 
       if(words[1].isalnum() and len(words[1])<6): #If second string is 1 2 3 4 5 digit hexadecimal then write the followings in output file:
         f.write(converter('13', '0', words[1]))
         f.write('\n')
@@ -532,7 +542,7 @@ for line in upper_list:
     if(len(words)>2): # If there is more than 2 tokens in a line then there is a syntax error
       print("Syntax error.")
       exit()
-    if ( ( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'') and (words[1] not in label_dict) ):  #If second word is hexadecimal or a char between ' '  then check the followings: 
+    if ( (( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict) ):  #If second word is hexadecimal or a char between ' '  then check the followings: 
       if(words[1].isalnum() and len(words[1])<6): #If second string is 1 2 3 4 5 digit hexadecimal then write the followings in output file:
         f.write(converter('14', '0', words[1]))
         f.write('\n')
@@ -551,7 +561,7 @@ for line in upper_list:
     if(len(words)>2): # If there is more than 2 tokens in a line then there is a syntax error
       print("Syntax error.")
       exit()
-    if ( ( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'') and (words[1] not in label_dict) ):   #If second word is hexadecimal or a char between ' '  then check the followings: 
+    if ( (( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict) ):   #If second word is hexadecimal or a char between ' '  then check the followings: 
       if(words[1].isalnum() and len(words[1])<6):#If second string is 1 2 3 4 5 digit hexadecimal then write the followings in output file:
         f.write(converter('15', '0', words[1]))
         f.write('\n')
@@ -570,7 +580,7 @@ for line in upper_list:
     if(len(words)>2):# If there is more than 2 tokens in a line then there is a syntax error
       print("Syntax error.")
       exit()
-    if ( ( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'') and (words[1] not in label_dict) ):   #If second word is hexadecimal or a char between ' '  then check the followings: 
+    if ( (( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict) ):  #If second word is hexadecimal or a char between ' '  then check the followings: 
       if(words[1].isalnum() and len(words[1])<6):#If second string is 1 2 3 4 5 digit hexadecimal then write the followings in output file:
         f.write(converter('16', '0', words[1]))
         f.write('\n')
@@ -590,7 +600,7 @@ for line in upper_list:
       print("Syntax error.")
       exit()
 
-    if ( ( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'') and (words[1] not in label_dict) ):   #If second word is hexadecimal or a char between ' '  then check the followings:
+    if ( (( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict) ):  #If second word is hexadecimal or a char between ' '  then check the followings:
       if(words[1].isalnum() and len(words[1])<6):#If second string is 1 2 3 4 5 digit hexadecimal then write the followings in output file:
         f.write(converter('17', '0', words[1]))
         f.write('\n')
@@ -611,7 +621,7 @@ for line in upper_list:
       print("Syntax error.")
       exit()
 
-    if ( ( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'') and (words[1] not in label_dict) ):   #If second word is hexadecimal or a char between ' '  then check the followings:
+    if ( (( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict) ):   #If second word is hexadecimal or a char between ' '  then check the followings:
       if(words[1].isalnum() and len(words[1])<6):#If second string is 1 2 3 4 5 digit hexadecimal then write the followings in output file:
         f.write(converter('18', '0', words[1]))
         f.write('\n')
@@ -632,7 +642,7 @@ for line in upper_list:
       print("Syntax error.")
       exit()
 
-    if ( ( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'') and (words[1] not in label_dict) ):   #If second word is hexadecimal or a char between ' '  then check the followings:
+    if ( (( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict) ):  #If second word is hexadecimal or a char between ' '  then check the followings:
       if(words[1].isalnum() and len(words[1])<6): #If second string is 1 2 3 4 5 digit hexadecimal then write the followings in output file:
         f.write(converter('19', '0', words[1]))
         f.write('\n')
@@ -653,7 +663,7 @@ for line in upper_list:
       print("Syntax error.")
       exit()
 
-    if ( ( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'') and (words[1] not in label_dict) ):  #If second word is hexadecimal or a char between ' '  then check the followings:
+    if ( (( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict) ):  #If second word is hexadecimal or a char between ' '  then check the followings:
       if(words[1].isalnum() and len(words[1])<6): #If second string is 1 2 3 4 5 digit hexadecimal then write the followings in output file:
         f.write(converter('1A', '0', words[1]))
         f.write('\n')
@@ -704,7 +714,7 @@ for line in upper_list:
       else:                                     # If the word between [ ] is a hexadecimal number, then write the following in output file  
         f.write(converter('1C', '3', words[1][1:-1]))
         f.write('\n')
-    elif ( ( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'') and (words[1] not in label_dict) ):    #If second word is hexadecimal or a char between ' '  then check the followings:   
+    elif ( (( (words[1].isalnum() and (len(words[1])<6 ) )) or (len(words[1])==3 and words[1][0]=='\'' and words[1][2]=='\'')) and (words[1] not in label_dict) ):    #If second word is hexadecimal or a char between ' '  then check the followings:   
 
       if(words[1].isalnum() and len(words[1])<6): #If second string is 1 2 3 4 5 digit hexadecimal then write the followings in output file:
         f.write(converter('1C', '0', words[1]))
@@ -720,6 +730,4 @@ for line in upper_list:
         print("Syntax error.")
         exit()
 
-  else: 
-      print("Syntax error.")
-      exit()
+ 
