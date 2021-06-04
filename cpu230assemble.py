@@ -16,8 +16,8 @@ def converter(opCode,adressingMode,Operand):  # converts the given assembly inst
   instr= instr.upper() 
   return instr
 
-# All instructions.
-my_dict = {'HALT': 1, 'LOAD': 2, 'STORE':3, 'ADD':4, 'SUB':5, 'INC':6, 'DEC':7, 'XOR':8, 'AND':9,   load [ a ]
+# All instructions. 
+my_dict = {'HALT': 1, 'LOAD': 2, 'STORE':3, 'ADD':4, 'SUB':5, 'INC':6, 'DEC':7, 'XOR':8, 'AND':9,  
            'OR':10, 'NOT':11, 'SHL': 12, 'SHR':13, 'NOP':14, 'PUSH':15, 'POP':16,'CMP':17,
            'JMP':18,'JZ':19, 'JE':19, 'JNZ':20, 'JNE':20, 'JC':21, 'JNC':22, 'JA':23, 
           'JAE':24, 'JB':25, 'JBE':26, 'READ':27,'PRINT':28}
@@ -35,19 +35,19 @@ output_filename=sys.argv[2]
 
 upper_list = [] # All lines in input file is recorded in this list.
 
-with open(input_filename, r) as first_file:  # We put all lines in a list that is named as upper_list.
+with open(input_filename, "r") as first_file:  # We put all lines in a list that is named as upper_list.
   for line in first_file:
 
     stripped_line = line.strip()                           
     if("'" in line ):
-      upper_list.append(upper(line[:-3]))
+      upper_list.append(line[:-3].upper() )
     elif(("[" in stripped_line) and ("]" in stripped_line)):
       index1=line.index("[")
       index2=line.index("]")
       stripped_line[index1:index2+1].replace(' ', '')
-      upper_list.append(upper(stripp_line))
+      upper_list.append(stripped_line.upper())
     else:
-      upper_list.append(upper(stripp_line))
+      upper_list.append(stripped_line.upper())
 
 
 
@@ -60,7 +60,7 @@ for line in upper_list:
   stripped_line = line.strip()
   if ':' in  stripped_line: # If a line contains colon then it is a label.
     words=stripped_line.split()
-    if(len(words)!=1 or stripped_line.count(":")>1 or stripped_line[-1]!=":" or stripped_line[:-1].isalnum()): # syntax check.
+    if(len(words)!=1 or stripped_line.count(":")>1 or stripped_line[-1]!=":" or not stripped_line[:-1].isalnum() ): # syntax check.
       print("Syntax error.")
       exit()
     
@@ -79,14 +79,16 @@ for line in upper_list:
 
 f = open(output_filename, "w")
 
-  
+
 for line in upper_list:  
-  print(label_dict)   
+
+  
+
   if(len(stripped_line)==0): # If line is empty then continue to next iteration.
     continue
 
   words = stripped_line.split()  # The tokenized version of a list. The list contains strings. For example for LOAD A, words[0]="LOAD" and words[1]="A".
- 
+  print(words)
 
   if words[0] == 'HALT': # If first string of a line is HALT, then write the followings in output file:
     if(len(words)>1): # If there is more than 1 tokens in a line then there is a syntax error.
@@ -424,7 +426,7 @@ for line in upper_list:
 
 
   elif words[0] == 'NOP': # If first string of a line is NOP, then check the second string.
-    if(len(words)>2): # If there is more than 2 tokens in a line then there is a syntax error
+    if(len(words)>1): # If there is more than 2 tokens in a line then there is a syntax error
       print("Syntax error.")
       exit()
     f.write('380000')
