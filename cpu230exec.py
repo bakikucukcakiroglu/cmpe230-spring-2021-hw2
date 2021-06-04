@@ -90,9 +90,9 @@ register_value_dict = {'PC' :'0000000000000000', 'A':'0000000000000000', 'B' :'0
 register_adress_dict = {'0000000000000000': 'PC', '0000000000000001':'A', '0000000000000010':'B', '0000000000000011':'C', '0000000000000100':'D', '0000000000000101':'E','0000000000000110':'S'}
 # This dict keeps adresses of register in our virtual cpu. 
 
-flags= {'ZF': None, 'CF': None, 'SF': None}         # This dict keeps flags. They are initially empty. 
-output_file_name=sys.argv[2]                        # Takes output file that program write on as an argument. 
-output_file= open(output_file_name, "w")            # Allows us writing to output file. 
+flags= {'ZF': None, 'CF': None, 'SF': None}                         # This dict keeps flags. They are initially empty. 
+output_file_name = output_filename=filename[:-4]+'.txt'       # Takes output file that program write on as an argument. 
+output_file= open(output_file_name, "w")                            # Allows us writing to output file. 
 with open(filename, "r") as d_file:                 
     counter=0
     while int(register_value_dict['PC'],base=2) <65536:
@@ -661,15 +661,17 @@ with open(filename, "r") as d_file:
             if list[1]=='00':                                
                 operand=list[2]
                 ascii_char=int(operand, base=2)
-                print(chr(ascii_char))
                 output_file.write(chr(ascii_char))
+                output_file.write('\n')
+
 
             if list[1]=='01':
                 register_name=register_adress_dict[list[2]]
                 operand=register_value_dict[register_name]
                 ascii_char=int(operand, base=2)
-                print(chr(ascii_char))
                 output_file.write(chr(ascii_char))
+                output_file.write('\n')
+
 
             if list[1]=='10':
                 register_name=register_adress_dict[list[2]]
@@ -678,6 +680,7 @@ with open(filename, "r") as d_file:
                 operand=memory[memory_address_dec]+memory[memory_address_dec+1]
                 ascii_char=int(operand, base=2)
                 output_file.write(chr(ascii_char))
+                output_file.write('\n')
 
                 
             if list[1]=='11':
@@ -685,6 +688,7 @@ with open(filename, "r") as d_file:
                 operand=memory[memory_address_dec]+memory[memory_address_dec+1]
                 ascii_char=int(operand, base=2)
                 output_file.write(chr(ascii_char))
+                output_file.write('\n')
 
             register_value_dict['PC']=format(int(register_value_dict['PC'],2)+3, '016b')
 

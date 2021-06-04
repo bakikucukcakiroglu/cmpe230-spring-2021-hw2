@@ -31,7 +31,8 @@ register_dict = {'PC' :'0000', 'A':'0001', 'B' :'0002', 'C':'0003', 'D':'0004', 
 
 # I/O
 input_filename = sys.argv[1]
-output_filename=sys.argv[2]
+output_filename=input_filename[:-4]+'.bin'
+
 
 upper_list = [] # All lines in input file is recorded in this list.
 
@@ -45,8 +46,9 @@ with open(input_filename, "r") as first_file:  # We put all lines in a list that
     elif(("[" in stripped_line) and ("]" in stripped_line)):
       index1=line.index("[")
       index2=line.index("]")
-      stripped_line[index1:index2+1].replace(' ', '')
-      upper_list.append(stripped_line.upper())
+
+      no_space=stripped_line[:index1]+stripped_line[index1:index2+1].replace(' ', '')
+      upper_list.append(no_space.upper())
     else:
       upper_list.append(stripped_line.upper())
 
@@ -61,14 +63,14 @@ for line in upper_list:
   stripped_line = line.strip()
   if ':' in  stripped_line: # If a line contains colon then it is a label.
     words=stripped_line.split()
-    if(len(words)!=1 or stripped_line.count(":")>1 or stripped_line[-1]!=":" or not stripped_line[:-1].isalnum() ): # syntax check.
-      print("Syntax error.")
-      exit()
+    # if(len(words)!=1 or stripped_line.count(":")>1 or stripped_line[-1]!=":" or not stripped_line[:-1].isalnum() ): # syntax check.
+    #   print("Syntax error.")
+    #   exit()
     
-    for x in label_dict:
-      if(x.lower() == words[0].lower()):
-        print("Syntax error.")
-        exit()
+    # for x in label_dict:
+    #   if(x.lower() == words[0].lower()):
+    #     print("Syntax error.")
+    #     exit()
 
     temp = stripped_line[:-1]  
     label_dict[temp] = count 
@@ -83,17 +85,19 @@ f = open(output_filename, "w")
 
 for stripped_line in upper_list:  
 
+  print(stripped_line)
+
   
 
   if(len(stripped_line)==0): # If line is empty then continue to next iteration.
     continue
 
-  elif(':' in stripped_line ):
-    if(stripped_line[:-1] in label_dict):
-      continue
-    else:
-      print("Syntax error.")
-      exit()
+  # elif(':' in stripped_line ):
+  #   if(stripped_line[:-1] in label_dict):
+  #     continue
+  #   else:
+  #     print("Syntax error.")
+  #     exit()
 
   words = stripped_line.split()  # The tokenized version of a list. The list contains strings. For example for LOAD A, words[0]="LOAD" and words[1]="A".
 
@@ -726,4 +730,11 @@ for stripped_line in upper_list:
         print("Syntax error.")
         exit()
 
- 
+  # else:
+  #   print("Syntax error.")
+  #   exit()
+
+
+
+
+
